@@ -13,12 +13,17 @@ func world(w http.ResponseWriter, r *http.Request) {
 	_, _ = fmt.Fprintf(w, "World")
 }
 
+func apiHello(w http.ResponseWriter, r *http.Request) {
+	_, _ = fmt.Fprintf(w, "API World")
+}
+
 func main() {
 	server := http.Server{
 		Addr: "127.0.0.1:8000",
 	}
 	http.HandleFunc("/hello", hello)
 	http.HandleFunc("/world", world)
+	http.HandleFunc("/api/hello", apiHello)
 
 	err := server.ListenAndServe()
 	if err != nil {
