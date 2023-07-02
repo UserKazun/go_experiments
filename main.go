@@ -3,7 +3,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"html/template"
+	"math/rand"
 	"net/http"
+	"time"
 )
 
 type Todo struct {
@@ -31,12 +34,25 @@ func APIGetTodo(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func tempTest(w http.ResponseWriter, r *http.Request) {
+	t, _ := template.ParseFiles("views/index.html")
+	seed := time.Now().Unix()
+	random := rand.New(rand.NewSource(seed))
+
+	err := t.Execute(w, random.Intn(10) > 5)
+	if err != nil {
+		return
+	}
+}
+
 func main() {
 	server := http.Server{
 		Addr: "127.0.0.1:8000",
 	}
 	http.HandleFunc("/api/todo", APIAddTodo)
 	http.HandleFunc("/api/todos", APIGetTodo)
+
+	http.HandleFunc("/sample", tempTest)
 
 	err := server.ListenAndServe()
 	if err != nil {
