@@ -7,7 +7,7 @@ import (
 )
 
 type Todo struct {
-	Title string `json:"title"`
+	Data []string `json:"data"`
 }
 
 func APIAddTodo(w http.ResponseWriter, r *http.Request) {
@@ -22,12 +22,7 @@ func APIAddTodo(w http.ResponseWriter, r *http.Request) {
 
 func APIGetTodo(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	var todos []Todo
-	todo1 := Todo{Title: "job"}
-	todos = append(todos, todo1)
-
-	todo2 := Todo{Title: "programming"}
-	todos = append(todos, todo2)
+	todos := Todo{Data: []string{"job", "programming"}}
 
 	res, _ := json.Marshal(todos)
 	_, err := w.Write(res)
