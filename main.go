@@ -1,29 +1,47 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 )
 
-func hello(w http.ResponseWriter, r *http.Request) {
-	_, _ = fmt.Fprintf(w, "Hello")
+type Todo struct {
+	Title string `json:"title"`
 }
 
-func world(w http.ResponseWriter, r *http.Request) {
-	_, _ = fmt.Fprintf(w, "World")
+func APIAddTodo(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		w.WriteHeader(500)
+		return
+	}
+
+	w.WriteHeader(200)
 }
 
-func apiHello(w http.ResponseWriter, r *http.Request) {
-	_, _ = fmt.Fprintf(w, "API World")
+func APIGetTodo(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var todos []Todo
+	todo1 := Todo{Title: "job"}
+	todos = append(todos, todo1)
+
+	todo2 := Todo{Title: "programming"}
+	todos = append(todos, todo2)
+
+	res, _ := json.Marshal(todos)
+	_, err := w.Write(res)
+	if err != nil {
+		return
+	}
 }
 
 func main() {
 	server := http.Server{
 		Addr: "127.0.0.1:8000",
 	}
-	http.HandleFunc("/hello", hello)
-	http.HandleFunc("/world", world)
-	http.HandleFunc("/api/hello", apiHello)
+	http.HandleFunc("/api/todo", APIAddTodo)
+	http.HandleFunc("/api/todos", APIGetTodo)
 
 	err := server.ListenAndServe()
 	if err != nil {
